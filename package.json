@@ -1,0 +1,20 @@
+{
+  "name": "NBCBackend",
+  "version": "1.0.0",
+  "description": "Backend for naive bayes classifier",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test/BayesModule.test.js"
+  },
+  "keywords": [
+    "nalapa",
+    "stemmer",
+    "naivebayes"
+  ],
+  "author": "Beta Priyoko",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "nalapa": "^1.11.0"
+  }
+}
