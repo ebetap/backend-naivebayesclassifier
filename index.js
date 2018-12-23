@@ -27,4 +27,5 @@ console.log(bayesInstance.classify('Dasar netizen sampah, ngasal aja kalau komen
 console.log(bayesInstance.classify('sedia pembesar dan peninggi badan, silahkan cek ig kami. atau wa ke nomor 083867138187'))
 console.log(bayesInstance.classify('Masuk pak eko, btw kamu minggu depan ada acara nggak?'))
 console.log(bayesInstance.classify('Piknik dimana itu mas? nggak ngajak-ngajak nih kamu.'))
+console.log(bayesInstance.classify('Ngopi dulu, ngopi lagi, ngopi terus'))
 
