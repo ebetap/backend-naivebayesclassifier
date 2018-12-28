@@ -5,6 +5,7 @@ const cors = require('cors')
 const upload = require('express-fileupload')
 const NBC = require('./lib/NBC')
 const fs = require('fs')
+const storeModelPath = './trained-model/trainedModel.json'
 
 let emojiCleaner = require('emoji-strip')
 app.use(bodyParser.json())
@@ -38,15 +39,14 @@ app.post('/datasets',(req,res) => {
 app.post('/train',(req,res) => {
   let datasetSpam = require('./datasets/spam/spam.json')
   let datasetNotSpam = require('./datasets/notspam/notspam.json')
-
   let bayesInstance = new NBC()
-  var notspam = datasetNotSpam.message.map(data => emojiCleaner(data.notspam))
-  var spam = datasetSpam.message.map(data => emojiCleaner(data.spam).normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+  let notspam = datasetNotSpam.message.map(data => emojiCleaner(data.notspam))
+  let spam = datasetSpam.message.map(data => emojiCleaner(data.spam).normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
 
   bayesInstance.train(notspam,'notspam')
   bayesInstance.train(spam,'spam')
 
-  fs.writeFileSync(`trained-model/trainedModel.json`,JSON.stringify(bayesInstance))
+  fs.writeFileSync(storeModelPath,JSON.stringify(bayesInstance))
 
   res.json({
     error: false,
@@ -55,7 +55,19 @@ app.post('/train',(req,res) => {
 })
 
 app.post('/classify', (req,res) => {
-  
+  let result
+  let savedModel = require(storeModelPath)
+  let documentToBeClassify = emojiCleaner(req.body.komentar).normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+  let restoredModel = new NBC()
+  restoredModel.restore(savedModel)
+
+  result = restoredModel.classify(documentToBeClassify)
+
+  res.json(result)
+})
+
+app.get('/model-evaluation',(req,res) => {
+
 })
 
 app.listen(3000, () => console.log('listening on port 3000'));
