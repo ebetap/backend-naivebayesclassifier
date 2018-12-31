@@ -5,6 +5,7 @@ const cors = require('cors')
 const upload = require('express-fileupload')
 const NBC = require('./lib/NBC')
 const fs = require('fs')
+const kFold =require('./lib/KFoldValidation')
 const storeModelPath = './trained-model/trainedModel.json'
 
 let emojiCleaner = require('emoji-strip')
@@ -66,8 +67,13 @@ app.post('/classify', (req,res) => {
   res.json(result)
 })
 
-app.get('/model-evaluation',(req,res) => {
+app.get('/validasi',(req,res) => {
+  const kFoldInstance = new kFold(10)
+  kFoldInstance.doValidation()
 
+  let validationResult = kFoldInstance.getResult()
+
+  res.json(validationResult)
 })
 
 app.listen(3000, () => console.log('listening on port 3000'));
