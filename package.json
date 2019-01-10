@@ -1,5 +1,5 @@
 {
-  "name": "NBCBackend",
+  "name": "NBCBackends",
   "version": "1.0.0",
   "description": "Backend for naive bayes classifier",
   "main": "index.js",
