@@ -76,4 +76,8 @@ app.get('/validasi',(req,res) => {
   res.json(validationResult)
 })
 
+app.get('/', (req,res) => {
+  res.send(`<h1 style="text-align:center;font-size: 45px;margin-top: 40px;">Naive Bayes API for Beta\'s Thesis</h1>`)
+})
+
 app.listen(3000, () => console.log('listening on port 3000'));

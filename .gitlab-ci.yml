@@ -1,0 +1,13 @@
+image: node:8.12.0
+
+stages: 
+  - deploy
+
+deploy:
+  stage: deploy
+  script:
+    - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/naivebayes8912-api.git
+    - git push heroku master --force
+
+  only:
+    - master
