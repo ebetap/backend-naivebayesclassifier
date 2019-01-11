@@ -37,12 +37,13 @@ app.post('/datasets',(req,res) => {
   }
 })
 
+// .replace(/[\u0300-\u036f]/g, "")
 app.post('/train',(req,res) => {
   let datasetSpam = require('./datasets/spam/spam.json')
   let datasetNotSpam = require('./datasets/notspam/notspam.json')
   let bayesInstance = new NBC()
-  let notspam = datasetNotSpam.message.map(data => emojiCleaner(data.notspam))
-  let spam = datasetSpam.message.map(data => emojiCleaner(data.spam).normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+  let notspam = datasetNotSpam.message.map(data => emojiCleaner(data.notspam).normalize('NFD').normalize('NFC').normalize('NFKC').normalize('NFKD'))
+  let spam = datasetSpam.message.map(data => emojiCleaner(data.spam).normalize('NFD').normalize('NFC').normalize('NFKC').normalize('NFKD'))
 
   bayesInstance.train(notspam,'notspam')
   bayesInstance.train(spam,'spam')
@@ -58,7 +59,7 @@ app.post('/train',(req,res) => {
 app.post('/classify', (req,res) => {
   let result
   let savedModel = require(storeModelPath)
-  let documentToBeClassify = emojiCleaner(req.body.komentar).normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+  let documentToBeClassify = emojiCleaner(req.body.komentar).normalize('NFD').normalize('NFC').normalize('NFKC').normalize('NFKD')
   let restoredModel = new NBC()
   restoredModel.restore(savedModel)
 
