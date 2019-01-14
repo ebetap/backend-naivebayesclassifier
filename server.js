@@ -7,6 +7,7 @@ const NBC = require('./lib/NBC')
 const fs = require('fs')
 const kFold =require('./lib/KFoldValidation')
 const storeModelPath = './trained-model/trainedModel.json'
+const puppeteer = require('puppeteer')
 
 let emojiCleaner = require('emoji-strip')
 app.use(bodyParser.json())
@@ -57,15 +58,85 @@ app.post('/train',(req,res) => {
 })
 
 app.post('/classify', (req,res) => {
-  let result
-  let savedModel = require(storeModelPath)
-  let documentToBeClassify = emojiCleaner(req.body.komentar)
-  let restoredModel = new NBC()
-  restoredModel.restore(savedModel)
+(async () => {
+  try {
+    let komentarlist = []
+    let result = []
+    const browser = await puppeteer.launch({headless: true});
+    const page = await browser.newPage();
+    const url = req.body.url;
+    await page.goto(url)
 
-  result = restoredModel.classify(documentToBeClassify)
+    let dataku = []
+    let lis = null
+    let iterationku = 0
+    let geturlImage = await page.$('.KL4Bh')
+    let geturlVideo = await page.$('._5wCQW')
+    for(let j=1;j<=15;j++){
+      console.log('Crawling Data instagram...',j)
+      await page.waitForSelector('li:nth-child(2) button')
+      let button = await page.$('li:nth-child(2) button')
+      if(button){
+        button.click()
+        lis = await page.$$('.C4VMK')
+        if(lis != null){
+          dataku = lis
+        }
+      }
+      iterationku++
+    }
+    
+    if(iterationku == 15){
+      for(const li of dataku) {
+        const comment = await li.$eval('span', (span) => span.textContent)
+        komentarlist.push(comment)
+      }
+    }
 
-  res.json(result)
+    let savedModel = require(storeModelPath)
+    let restoredModel = new NBC()
+    restoredModel.restore(savedModel)
+
+    console.log(komentarlist)
+
+    for(const cl in komentarlist) {
+      let predictedKomentar = restoredModel.classify(emojiCleaner(komentarlist[cl]))
+      predictedKomentar.komentar = komentarlist[cl]
+      result.push(predictedKomentar)
+    }
+
+
+    if(geturlImage != null){
+      let urlImage = await geturlImage.$eval('img',(img) => img.src)
+      res.json({
+        imageUrl: urlImage,
+        hasilKlasifikasi: result
+      })
+    }
+    
+    if(geturlVideo != null){
+      let urlVideo = await geturlVideo.$eval('video',(video) => video.src)
+      res.json({
+        videoUrl: urlVideo,
+        hasilKlasifikasi: result
+      })
+    }
+
+  } catch (error) {
+    console.log(error)
+  }
+  
+})()
+
+  // let savedModel = require(storeModelPath)
+  // let documentToBeClassify = emojiCleaner(req.body.komentar)
+  // let restoredModel = new NBC()
+  // restoredModel.restore(savedModel)
+
+  // // result = restoredModel.classify(documentToBeClassify)
+
+  // res.json(result)
+  
 })
 
 app.get('/validasi',(req,res) => {
