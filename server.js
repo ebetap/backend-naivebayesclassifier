@@ -72,7 +72,7 @@ app.post('/classify', (req,res) => {
     let iterationku = 0
     let geturlImage = await page.$('.KL4Bh')
     let geturlVideo = await page.$('._5wCQW')
-    for(let j=1;j<=15;j++){
+    for(let j=1;j<=25;j++){
       console.log('Crawling Data instagram...',j)
       await page.waitForSelector('li:nth-child(2) button')
       let button = await page.$('li:nth-child(2) button')
@@ -86,7 +86,7 @@ app.post('/classify', (req,res) => {
       iterationku++
     }
     
-    if(iterationku == 15){
+    if(iterationku == 25){
       for(const li of dataku) {
         const comment = await li.$eval('span', (span) => span.textContent)
         komentarlist.push(comment)
@@ -96,8 +96,6 @@ app.post('/classify', (req,res) => {
     let savedModel = require(storeModelPath)
     let restoredModel = new NBC()
     restoredModel.restore(savedModel)
-
-    console.log(komentarlist)
 
     for(const cl in komentarlist) {
       let predictedKomentar = restoredModel.classify(emojiCleaner(komentarlist[cl]))
@@ -122,6 +120,7 @@ app.post('/classify', (req,res) => {
       })
     }
 
+    await browser.close()
   } catch (error) {
     console.log(error)
   }
