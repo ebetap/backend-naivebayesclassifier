@@ -18,7 +18,7 @@
     "cors": "^2.8.5",
     "emoji-strip": "^1.0.1",
     "express": "^4.16.4",
-    "express-fileupload": "^1.0.0",
+    "express-fileupload": "^1.1.9",
     "ml-cross-validation": "^1.2.0",
     "nalapa": "^1.11.0",
     "nodemon": "^1.18.9",
