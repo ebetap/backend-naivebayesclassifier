@@ -22,6 +22,6 @@
     "ml-cross-validation": "^1.2.0",
     "nalapa": "^1.11.0",
     "nodemon": "^1.18.9",
-    "puppeteer": "^1.11.0"
+    "puppeteer": "^1.13.0"
   }
 }
